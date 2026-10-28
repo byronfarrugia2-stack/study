@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>StudySync AI</title>
+
+<style>
+:root{
+    --bg:#f4f6f9;
+    --card:white;
+    --text:#111;
+    --accent:#2563eb;
+}
+
+.dark{
+    --bg:#121826;
+    --card:#1f2937;
+    --text:#ffffff;
+    --accent:#3b82f6;
+}
+
+body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial,sans-serif;
+    padding:20px;
+}
+
+h1,h2,h3{
+    color:var(--text);
+}
+
+.card{
+    background:var(--card);
+    padding:20px;
+    border-radius:15px;
+    margin-bottom:20px;
+}
+
+button{
+    padding:10px 15px;
+    border:none;
+    border-radius:8px;
+    background:var(--accent);
+    color:white;
+    cursor:pointer;
+}
+
+input,select{
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
+
+.stat{
+    background:var(--card);
+    padding:15px;
+    border-radius:15px;
+    text-align:center;
+}
+
+.planner{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td,th{
+    border:1px solid #ccc;
+    height:60px;
+    text-align:center;
+}
+
+td{
+    min-width:120px;
+}
+
+.cell{
+    width:100%;
+    height:100%;
+    border:none;
+    background:transparent;
+    color:var(--text);
+    text-align:center;
+}
+
+.assessment{
+    padding:10px;
+    background:#eef4ff;
+    color:#000;
+    border-radius:10px;
+    margin-top:10px;
+}
+
+.dark .assessment{
+    background:#374151;
+    color:white;
+}
+
+#timer{
+    font-size:40px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📚 StudySync AI</h1>
+
+<button onclick="toggleDarkMode()">🌙 Dark Mode</button>
+
+<br><br>
+
+<div class="stats">
+
+<div class="stat">
+<h2 id="assessmentCount">0</h2>
+<p>Assessments</p>
+</div>
+
+<div class="stat">
+<h2 id="studyStreak">1</h2>
+<p>Study Streak 🔥</p>
+</div>
+
+<div class="stat">
+<h2 id="hoursWeek">0</h2>
+<p>Hours Planned</p>
+</div>
+
+</div>
+
+<div class="card">
+<h2>🎯 What Should I Study?</h2>
+<button onclick="recommendStudy()">Generate Recommendation</button>
+<p id="recommendation"></p>
+</div>
+
+<div class="card">
+<h2>✅ Add Assessment</h2>
+
+<input id="subject" placeholder="Subject">
+<input id="task" placeholder="Assessment Name">
+<input id="weight" type="number" placeholder="Weighting %">
+<input id="due" type="date">
+
+<button onclick="addAssessment()">
+Add Assessment
+</button>
+
+<div id="assessmentList"></div>
+</div>
+
+<div class="card planner">
+<h2>📅 Weekly Planner</h2>
+
+<table>
+<tr>
+<th>Time</th>
+<th>Mon</th>
+<th>Tue</th>
+<th>Wed</th>
+<th>Thu</th>
+<th>Fri</th>
+<th>Sat</th>
+<th>Sun</th>
+</tr>
+
+<tr>
+<td>4-5</td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+</tr>
+
+<tr>
+<td>5-6</td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+</tr>
+
+<tr>
+<td>6-7</td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+</tr>
+
+<tr>
+<td>7-8</td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+<td><input class="cell"></td>
+</tr>
+
+</table>
+</div>
+
+<div class="card">
+<h2>⏱️ Pomodoro Timer</h2>
+
+<div id="timer">25:00</div>
+
+<button onclick="startTimer()">
+Start
+</button>
+
+<button onclick="resetTimer()">
+Reset
+</button>
+
+</div>
+
+<div class="card">
+<h2>📚 Flashcards</h2>
+
+<input id="flashQuestion" placeholder="Question">
+<input id="flashAnswer" placeholder="Answer">
+
+<button onclick="addFlashcard()">
+Add Flashcard
+</button>
+
+<div id="flashcards"></div>
+
+</div>
+
+<script>
+
+let assessments =
+JSON.parse(localStorage.getItem("assessments")) || [];
+
+let flashcards =
+JSON.parse(localStorage.getItem("flashcards")) || [];
+
+function saveData(){
+localStorage.setItem(
+"assessments",
+JSON.stringify(assessments)
+);
+
+localStorage.setItem(
+"flashcards",
+JSON.stringify(flashcards)
+);
+}
+
+function addAssessment(){
+
+let subject=
+document.getElementById("subject").value;
+
+let task=
+document.getElementById("task").value;
+
+let weight=
+document.getElementById("weight").value;
+
+let due=
+document.getElementById("due").value;
+
+assessments.push({
+subject,
+task,
+weight,
+due
+});
+
+saveData();
+renderAssessments();
+}
+
+function renderAssessments(){
+
+let html="";
+
+assessments.forEach(a=>{
+
+html+=`
+<div class="assessment">
+<b>${a.subject}</b><br>
+${a.task}<br>
+${a.weight}%<br>
+Due: ${a.due}
+</div>`;
+});
+
+document.getElementById(
+"assessmentList"
+).innerHTML=html;
+
+document.getElementById(
+"assessmentCount"
+).textContent=
+assessments.length;
+}
+
+function recommendStudy(){
+
+if(assessments.length===0){
+document.getElementById(
+"recommendation"
+).innerText=
+"Add assessments first.";
+return;
+}
+
+document.getElementById(
+"recommendation"
+).innerText =
+"Focus on " +
+assessments[0].subject +
+" tonight for 1-2 hours.";
+}
+
+let interval;
+let seconds=1500;
+
+function startTimer(){
+
+clearInterval(interval);
+
+interval=setInterval(()=>{
+
+seconds--;
+
+let mins=
+Math.floor(seconds/60);
+
+let secs=
+seconds%60;
+
+document.getElementById(
+"timer"
+).innerText=
+mins.toString().padStart(2,"0")
++ ":" +
+secs.toString().padStart(2,"0");
+
+if(seconds<=0){
+clearInterval(interval);
+alert("Pomodoro Finished!");
+}
+
+},1000);
+}
+
+function resetTimer(){
+
+clearInterval(interval);
+
+seconds=1500;
+
+document.getElementById(
+"timer"
+).innerText=
+"25:00";
+}
+
+function toggleDarkMode(){
+
+document.body.classList.toggle("dark");
+
+localStorage.setItem(
+"theme",
+document.body.classList.contains("dark")
+);
+}
+
+if(localStorage.getItem("theme")
+==="true"){
+document.body.classList.add("dark");
+}
+
+function addFlashcard(){
+
+let q=
+document.getElementById(
+"flashQuestion"
+).value;
+
+let a=
+document.getElementById(
+"flashAnswer"
+).value;
+
+flashcards.push({
+q,a
+});
+
+saveData();
+renderFlashcards();
+}
+
+function renderFlashcards(){
+
+let html="";
+
+flashcards.forEach(card=>{
+
+html+=`
+<div class="assessment"
+onclick="alert('${card.a}')">
+<b>${card.q}</b>
+<br>
+(click to reveal)
+</div>`;
+});
+
+document.getElementById(
+"flashcards"
+).innerHTML=html;
+}
+
+renderAssessments();
+renderFlashcards();
+
+</script>
+
+</body>
+</html>
