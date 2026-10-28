@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudySync AI</title>
 
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>StudySync AI</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 
 <body>
@@ -45,12 +47,12 @@
         </div>
 
         <div class="card">
-            <h3>Assignments</h3>
+            <h3>Assessments</h3>
             <h2 id="assignmentCount">0</h2>
         </div>
 
         <div class="card">
-            <h3>Upcoming Exams</h3>
+            <h3>Exams</h3>
             <h2 id="examCount">0</h2>
         </div>
 
@@ -61,22 +63,24 @@
 
     </section>
 
-    <!-- AI GENERATOR -->
+    <!-- AI PLANNER -->
 
     <section class="panel">
 
         <h2>🤖 AI Study Planner</h2>
 
-        <div class="row">
-            <input
-                type="number"
-                id="availableHours"
-                placeholder="Available study hours this week">
-        </div>
+        <input
+            type="number"
+            id="availableHours"
+            placeholder="Available study hours this week">
+
+        <br><br>
 
         <button id="generateSchedule">
-            Generate Study Schedule
+            Generate Schedule
         </button>
+
+        <br><br>
 
         <div id="aiResponse"></div>
 
@@ -86,7 +90,7 @@
 
     <section class="panel">
 
-        <h2>📅 Weekly Study Planner</h2>
+        <h2>📅 Weekly Planner</h2>
 
         <div class="planner-container">
 
@@ -94,54 +98,44 @@
 
                 <h3>Activities</h3>
 
-                <div class="activity study"
-                     data-type="study">
+                <div class="activity study" data-type="study">
                     📚 Study
                 </div>
 
-                <div class="activity sleep"
-                     data-type="sleep">
-                    🌙 Sleep
+                <div class="activity sleep" data-type="sleep">
+                    😴 Sleep
                 </div>
 
-                <div class="activity school"
-                     data-type="school">
+                <div class="activity school" data-type="school">
                     🏫 School
                 </div>
 
-                <div class="activity commute"
-                     data-type="commute">
+                <div class="activity commute" data-type="commute">
                     🚗 Commuting
                 </div>
 
-                <div class="activity social"
-                     data-type="social">
+                <div class="activity social" data-type="social">
                     👥 Social
                 </div>
 
-                <div class="activity meal"
-                     data-type="meal">
-                    🍴 Meals
+                <div class="activity meal" data-type="meal">
+                    🍔 Meals
                 </div>
 
-                <div class="activity exercise"
-                     data-type="exercise">
+                <div class="activity exercise" data-type="exercise">
                     ⚽ Exercise
                 </div>
 
-                <div class="activity chore"
-                     data-type="chore">
+                <div class="activity chore" data-type="chore">
                     🧹 Chores
                 </div>
 
-                <div class="activity entertainment"
-                     data-type="entertainment">
+                <div class="activity entertainment" data-type="entertainment">
                     🎮 Entertainment
                 </div>
 
-                <div class="activity downtime"
-                     data-type="downtime">
-                    ⌛ Downtime
+                <div class="activity downtime" data-type="downtime">
+                    🛋 Downtime
                 </div>
 
             </div>
@@ -151,16 +145,17 @@
                 <table id="plannerTable">
 
                     <thead>
-                    <tr>
-                        <th>Time</th>
-                        <th>Mon</th>
-                        <th>Tue</th>
-                        <th>Wed</th>
-                        <th>Thu</th>
-                        <th>Fri</th>
-                        <th>Sat</th>
-                        <th>Sun</th>
-                    </tr>
+
+                        <tr>
+                      <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                            <th>Sun</th>
+                        </tr>
+
                     </thead>
 
                     <tbody id="plannerBody">
@@ -175,44 +170,38 @@
 
     </section>
 
-    <!-- ASSIGNMENTS -->
+    <!-- ASSESSMENTS -->
 
     <section class="panel">
 
-        <h2>📝 Assessments</h2>
+        <h2>📝 Assessment Manager</h2>
 
         <div class="assignment-form">
 
             <input
+                type="text"
                 id="subject"
                 placeholder="Subject">
 
             <input
+                type="text"
                 id="taskName"
-                placeholder="Assessment">
+                placeholder="Task Name">
 
             <input
-                id="weighting"
                 type="number"
+                id="weighting"
                 placeholder="Weighting %">
 
             <input
-                id="dueDate"
-                type="date">
+                type="date"
+                id="dueDate">
 
             <select id="difficulty">
 
-                <option value="1">
-                    Easy
-                </option>
-
-                <option value="2">
-                    Medium
-                </option>
-
-                <option value="3">
-                    Hard
-                </option>
+                <option value="1">Easy</option>
+                <option value="2">Medium</option>
+                <option value="3">Hard</option>
 
             </select>
 
@@ -222,9 +211,7 @@
 
         </div>
 
-        <div id="taskList">
-
-        </div>
+        <div id="taskList"></div>
 
     </section>
 
@@ -232,7 +219,7 @@
 
     <section class="panel">
 
-        <h2>⏳ Countdowns</h2>
+        <h2>⏳ Exam Countdowns</h2>
 
         <div id="countdownContainer">
 
@@ -240,7 +227,7 @@
 
     </section>
 
-    <!-- MONTHLY CALENDAR -->
+    <!-- CALENDAR -->
 
     <section class="panel">
 
@@ -252,9 +239,7 @@
                 ◀
             </button>
 
-            <h3 id="monthLabel">
-                October 2026
-            </h3>
+            <h3 id="monthLabel"></h3>
 
             <button id="nextMonth">
                 ▶
@@ -270,14 +255,22 @@
 
     <!-- ANALYTICS -->
 
-    <section class= <div class="chart-grid">
+    <section class="panel">
+
+        <h2>📊 Analytics Dashboard</h2>
+
+        <div class="chart-grid">
 
             <div class="chart-card">
+
                 <canvas id="studyPie"></canvas>
+
             </div>
 
             <div class="chart-card">
+
                 <canvas id="hoursChart"></canvas>
+
             </div>
 
         </div>
@@ -316,10 +309,12 @@
 
     <section class="panel">
 
-        <h2>⏱ Pomodoro</h2>
+        <h2>⏱ Pomodoro Timer</h2>
 
         <div id="timer">
+
             25:00
+
         </div>
 
         <div class="timer-buttons">
@@ -340,7 +335,7 @@
 
     </section>
 
-    <!-- EXPORT -->
+    <!-- PDF EXPORT -->
 
     <section class="panel">
 
@@ -365,5 +360,4 @@
 script.jsscript>
 
 </body>
-
 </html>
