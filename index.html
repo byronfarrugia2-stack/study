@@ -1,452 +1,369 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>StudySync AI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudySync AI</title>
 
-<style>
-:root{
-    --bg:#f4f6f9;
-    --card:white;
-    --text:#111;
-    --accent:#2563eb;
-}
+    <link rel="stylesheet" href="style.css">
 
-.dark{
-    --bg:#121826;
-    --card:#1f2937;
-    --text:#ffffff;
-    --accent:#3b82f6;
-}
-
-body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:Arial,sans-serif;
-    padding:20px;
-}
-
-h1,h2,h3{
-    color:var(--text);
-}
-
-.card{
-    background:var(--card);
-    padding:20px;
-    border-radius:15px;
-    margin-bottom:20px;
-}
-
-button{
-    padding:10px 15px;
-    border:none;
-    border-radius:8px;
-    background:var(--accent);
-    color:white;
-    cursor:pointer;
-}
-
-input,select{
-    width:100%;
-    padding:10px;
-    margin:5px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-.stats{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-}
-
-.stat{
-    background:var(--card);
-    padding:15px;
-    border-radius:15px;
-    text-align:center;
-}
-
-.planner{
-    overflow-x:auto;
-}
-
-table{
-    width:100%;
-    border-collapse:collapse;
-}
-
-td,th{
-    border:1px solid #ccc;
-    height:60px;
-    text-align:center;
-}
-
-td{
-    min-width:120px;
-}
-
-.cell{
-    width:100%;
-    height:100%;
-    border:none;
-    background:transparent;
-    color:var(--text);
-    text-align:center;
-}
-
-.assessment{
-    padding:10px;
-    background:#eef4ff;
-    color:#000;
-    border-radius:10px;
-    margin-top:10px;
-}
-
-.dark .assessment{
-    background:#374151;
-    color:white;
-}
-
-#timer{
-    font-size:40px;
-    font-weight:bold;
-}
-</style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body>
 
-<h1>📚 StudySync AI</h1>
-
-<button onclick="toggleDarkMode()">🌙 Dark Mode</button>
-
-<br><br>
-
-<div class="stats">
-
-<div class="stat">
-<h2 id="assessmentCount">0</h2>
-<p>Assessments</p>
-</div>
-
-<div class="stat">
-<h2 id="studyStreak">1</h2>
-<p>Study Streak 🔥</p>
-</div>
-
-<div class="stat">
-<h2 id="hoursWeek">0</h2>
-<p>Hours Planned</p>
-</div>
-
-</div>
-
-<div class="card">
-<h2>🎯 What Should I Study?</h2>
-<button onclick="recommendStudy()">Generate Recommendation</button>
-<p id="recommendation"></p>
-</div>
-
-<div class="card">
-<h2>✅ Add Assessment</h2>
-
-<input id="subject" placeholder="Subject">
-<input id="task" placeholder="Assessment Name">
-<input id="weight" type="number" placeholder="Weighting %">
-<input id="due" type="date">
-
-<button onclick="addAssessment()">
-Add Assessment
-</button>
-
-<div id="assessmentList"></div>
-</div>
-
-<div class="card planner">
-<h2>📅 Weekly Planner</h2>
-
-<table>
-<tr>
-<th>Time</th>
-<th>Mon</th>
-<th>Tue</th>
-<th>Wed</th>
-<th>Thu</th>
-<th>Fri</th>
-<th>Sat</th>
-<th>Sun</th>
-</tr>
-
-<tr>
-<td>4-5</td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-</tr>
-
-<tr>
-<td>5-6</td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-</tr>
-
-<tr>
-<td>6-7</td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-</tr>
-
-<tr>
-<td>7-8</td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-<td><input class="cell"></td>
-</tr>
+<header>
 
-</table>
-</div>
+    <div class="logo">
+        📚 StudySync AI
+    </div>
 
-<div class="card">
-<h2>⏱️ Pomodoro Timer</h2>
+    <div class="header-right">
 
-<div id="timer">25:00</div>
+        <div class="streak-box">
+            🔥 <span id="streakCount">0</span> Day Streak
+        </div>
 
-<button onclick="startTimer()">
-Start
-</button>
+        <button id="darkModeBtn">
+            🌙 Dark Mode
+        </button>
 
-<button onclick="resetTimer()">
-Reset
-</button>
+    </div>
 
-</div>
+</header>
 
-<div class="card">
-<h2>📚 Flashcards</h2>
+<main>
 
-<input id="flashQuestion" placeholder="Question">
-<input id="flashAnswer" placeholder="Answer">
+    <!-- DASHBOARD -->
 
-<button onclick="addFlashcard()">
-Add Flashcard
-</button>
+    <section class="dashboard">
 
-<div id="flashcards"></div>
+        <div class="card">
+            <h3>Study Hours</h3>
+            <h2 id="hoursStudied">0</h2>
+        </div>
 
-</div>
+        <div class="card">
+            <h3>Assignments</h3>
+            <h2 id="assignmentCount">0</h2>
+        </div>
 
-<script>
+        <div class="card">
+            <h3>Upcoming Exams</h3>
+            <h2 id="examCount">0</h2>
+        </div>
 
-let assessments =
-JSON.parse(localStorage.getItem("assessments")) || [];
+        <div class="card">
+            <h3>Priority Task</h3>
+            <h2 id="priorityTask">None</h2>
+        </div>
 
-let flashcards =
-JSON.parse(localStorage.getItem("flashcards")) || [];
+    </section>
 
-function saveData(){
-localStorage.setItem(
-"assessments",
-JSON.stringify(assessments)
-);
+    <!-- AI GENERATOR -->
 
-localStorage.setItem(
-"flashcards",
-JSON.stringify(flashcards)
-);
-}
+    <section class="panel">
 
-function addAssessment(){
+        <h2>🤖 AI Study Planner</h2>
 
-let subject=
-document.getElementById("subject").value;
+        <div class="row">
+            <input
+                type="number"
+                id="availableHours"
+                placeholder="Available study hours this week">
+        </div>
 
-let task=
-document.getElementById("task").value;
+        <button id="generateSchedule">
+            Generate Study Schedule
+        </button>
 
-let weight=
-document.getElementById("weight").value;
+        <div id="aiResponse"></div>
 
-let due=
-document.getElementById("due").value;
+    </section>
 
-assessments.push({
-subject,
-task,
-weight,
-due
-});
+    <!-- WEEKLY TIMETABLE -->
 
-saveData();
-renderAssessments();
-}
+    <section class="panel">
 
-function renderAssessments(){
+        <h2>📅 Weekly Study Planner</h2>
 
-let html="";
+        <div class="planner-container">
 
-assessments.forEach(a=>{
+            <div class="activity-sidebar">
 
-html+=`
-<div class="assessment">
-<b>${a.subject}</b><br>
-${a.task}<br>
-${a.weight}%<br>
-Due: ${a.due}
-</div>`;
-});
+                <h3>Activities</h3>
 
-document.getElementById(
-"assessmentList"
-).innerHTML=html;
+                <div class="activity study"
+                     data-type="study">
+                    📚 Study
+                </div>
 
-document.getElementById(
-"assessmentCount"
-).textContent=
-assessments.length;
-}
+                <div class="activity sleep"
+                     data-type="sleep">
+                    🌙 Sleep
+                </div>
 
-function recommendStudy(){
+                <div class="activity school"
+                     data-type="school">
+                    🏫 School
+                </div>
 
-if(assessments.length===0){
-document.getElementById(
-"recommendation"
-).innerText=
-"Add assessments first.";
-return;
-}
+                <div class="activity commute"
+                     data-type="commute">
+                    🚗 Commuting
+                </div>
 
-document.getElementById(
-"recommendation"
-).innerText =
-"Focus on " +
-assessments[0].subject +
-" tonight for 1-2 hours.";
-}
+                <div class="activity social"
+                     data-type="social">
+                    👥 Social
+                </div>
 
-let interval;
-let seconds=1500;
+                <div class="activity meal"
+                     data-type="meal">
+                    🍴 Meals
+                </div>
 
-function startTimer(){
+                <div class="activity exercise"
+                     data-type="exercise">
+                    ⚽ Exercise
+                </div>
 
-clearInterval(interval);
+                <div class="activity chore"
+                     data-type="chore">
+                    🧹 Chores
+                </div>
 
-interval=setInterval(()=>{
+                <div class="activity entertainment"
+                     data-type="entertainment">
+                    🎮 Entertainment
+                </div>
 
-seconds--;
+                <div class="activity downtime"
+                     data-type="downtime">
+                    ⌛ Downtime
+                </div>
 
-let mins=
-Math.floor(seconds/60);
+            </div>
 
-let secs=
-seconds%60;
+            <div class="planner-table-container">
 
-document.getElementById(
-"timer"
-).innerText=
-mins.toString().padStart(2,"0")
-+ ":" +
-secs.toString().padStart(2,"0");
+                <table id="plannerTable">
 
-if(seconds<=0){
-clearInterval(interval);
-alert("Pomodoro Finished!");
-}
+                    <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                        <th>Sun</th>
+                    </tr>
+                    </thead>
 
-},1000);
-}
+                    <tbody id="plannerBody">
 
-function resetTimer(){
+                    </tbody>
 
-clearInterval(interval);
+                </table>
 
-seconds=1500;
+            </div>
 
-document.getElementById(
-"timer"
-).innerText=
-"25:00";
-}
+        </div>
 
-function toggleDarkMode(){
+    </section>
 
-document.body.classList.toggle("dark");
+    <!-- ASSIGNMENTS -->
 
-localStorage.setItem(
-"theme",
-document.body.classList.contains("dark")
-);
-}
+    <section class="panel">
 
-if(localStorage.getItem("theme")
-==="true"){
-document.body.classList.add("dark");
-}
+        <h2>📝 Assessments</h2>
 
-function addFlashcard(){
+        <div class="assignment-form">
 
-let q=
-document.getElementById(
-"flashQuestion"
-).value;
+            <input
+                id="subject"
+                placeholder="Subject">
 
-let a=
-document.getElementById(
-"flashAnswer"
-).value;
+            <input
+                id="taskName"
+                placeholder="Assessment">
 
-flashcards.push({
-q,a
-});
+            <input
+                id="weighting"
+                type="number"
+                placeholder="Weighting %">
 
-saveData();
-renderFlashcards();
-}
+            <input
+                id="dueDate"
+                type="date">
 
-function renderFlashcards(){
+            <select id="difficulty">
 
-let html="";
+                <option value="1">
+                    Easy
+                </option>
 
-flashcards.forEach(card=>{
+                <option value="2">
+                    Medium
+                </option>
 
-html+=`
-<div class="assessment"
-onclick="alert('${card.a}')">
-<b>${card.q}</b>
-<br>
-(click to reveal)
-</div>`;
-});
+                <option value="3">
+                    Hard
+                </option>
 
-document.getElementById(
-"flashcards"
-).innerHTML=html;
-}
+            </select>
 
-renderAssessments();
-renderFlashcards();
+            <button id="addTask">
+                Add Assessment
+            </button>
 
-</script>
+        </div>
+
+        <div id="taskList">
+
+        </div>
+
+    </section>
+
+    <!-- EXAM COUNTDOWNS -->
+
+    <section class="panel">
+
+        <h2>⏳ Countdowns</h2>
+
+        <div id="countdownContainer">
+
+        </div>
+
+    </section>
+
+    <!-- MONTHLY CALENDAR -->
+
+    <section class="panel">
+
+        <h2>📆 Monthly Calendar</h2>
+
+        <div class="calendar-header">
+
+            <button id="prevMonth">
+                ◀
+            </button>
+
+            <h3 id="monthLabel">
+                October 2026
+            </h3>
+
+            <button id="nextMonth">
+                ▶
+            </button>
+
+        </div>
+
+        <div id="calendar">
+
+        </div>
+
+    </section>
+
+    <!-- ANALYTICS -->
+
+    <section class= <div class="chart-grid">
+
+            <div class="chart-card">
+                <canvas id="studyPie"></canvas>
+            </div>
+
+            <div class="chart-card">
+                <canvas id="hoursChart"></canvas>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- FLASHCARDS -->
+
+    <section class="panel">
+
+        <h2>📚 Flashcards</h2>
+
+        <div class="flashcard-form">
+
+            <input
+                id="flashQuestion"
+                placeholder="Question">
+
+            <input
+                id="flashAnswer"
+                placeholder="Answer">
+
+            <button id="addFlashcard">
+                Add Card
+            </button>
+
+        </div>
+
+        <div id="flashcards">
+
+        </div>
+
+    </section>
+
+    <!-- POMODORO -->
+
+    <section class="panel">
+
+        <h2>⏱ Pomodoro</h2>
+
+        <div id="timer">
+            25:00
+        </div>
+
+        <div class="timer-buttons">
+
+            <button id="startTimer">
+                Start
+            </button>
+
+            <button id="pauseTimer">
+                Pause
+            </button>
+
+            <button id="resetTimer">
+                Reset
+            </button>
+
+        </div>
+
+    </section>
+
+    <!-- EXPORT -->
+
+    <section class="panel">
+
+        <h2>📄 Export</h2>
+
+        <button id="exportPDF">
+            Export Planner as PDF
+        </button>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <p>
+        StudySync AI © 2026
+    </p>
+
+</footer>
+
+script.jsscript>
 
 </body>
+
 </html>
